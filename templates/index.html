@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;600&family=Allura&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+    /* CSS AYARLARI */
+    .hero-section { 
+        text-align: center; padding: 180px 20px 100px 20px; min-height: 90vh; 
+        display: flex; flex-direction: column; justify-content: center; 
+        background: linear-gradient(to bottom, #f4f1ea 0%, #fff 100%);
+    }
+    .quote-text { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; font-style: italic; color: #8f9779; margin-bottom: 20px; }
+
+    /* Hizmet Kartları */
+    .services-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; max-width: 1200px; margin: 50px auto; padding: 0 20px; }
+    .service-card { background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 40px 30px; text-align: center; transition: all 0.4s; width: 350px; flex: 0 1 350px; display: flex; flex-direction: column; align-items: center; border: 1px solid #f9f9f9; position: relative; overflow: hidden; }
+    .service-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); border-color: #8f9779; }
+    .service-icon { font-size: 3.5rem; color: #8f9779; margin-bottom: 20px; }
+    .service-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin-bottom: 15px; color: #2c3e50; }
+    .service-preview { font-size: 0.95rem; color: #666; margin-bottom: 20px; }
+    .read-more-btn { margin-top: auto; color: #2c3e50; font-weight: 600; text-decoration: none; border-bottom: 1px solid #2c3e50; cursor: pointer; }
+
+    /* Detay Alanı */
+    .service-details { display: none; margin-top: 30px; color: #555; font-size: 1.05rem; line-height: 1.8; text-align: justify; text-justify: inter-word; hyphens: auto; text-wrap: pretty; white-space: normal; border-top: 1px solid #eee; padding-top: 25px; }
+    .service-details p { margin-bottom: 20px; }
+    .service-details br { display: none; }
+
+    /* Aktif Mod */
+    .service-card.active { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) !important; width: 90%; max-width: 800px; height: auto; max-height: 90vh; z-index: 1001; overflow-y: auto; padding: 50px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); border: none; align-items: flex-start; text-align: left; }
+    .service-card.active .service-icon { font-size: 2.5rem; margin-bottom: 10px; align-self: center; }
+    .service-card.active h3 { font-size: 2.5rem; border-bottom: 2px solid #8f9779; padding-bottom: 15px; width: 100%; text-align: center; }
+    .service-card.active .service-preview, .service-card.active .read-more-btn { display: none; }
+    .service-card.active .service-details, .service-card.active .close-btn { display: block; }
+
+    .close-btn { display: none; position: absolute; top: 20px; right: 20px; background: #f1f1f1; color: #333; width: 40px; height: 40px; border-radius: 50%; text-align: center; line-height: 40px; font-size: 20px; cursor: pointer; z-index: 1002; transition: 0.3s; }
+    .close-btn:hover { background: #e74c3c; color: white; }
+    .blog-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.85); z-index: 1000; display: none; backdrop-filter: blur(5px); }
+    .blog-overlay.active { display: block; }
+
+    /* Blog Kartları */
+    .blog-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; display: flex; flex-direction: column; transition: all 0.4s; }
+    .blog-img { width: 100%; height: 200px; object-fit: cover; }
+    .blog-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+    .blog-details { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; color: #555; }
+    .blog-card.active { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) !important; width: 90%; max-width: 800px; max-height: 90vh; z-index: 1001; overflow-y: auto; }
+    .blog-card.active .blog-details, .blog-card.active .close-btn { display: block; }
+    .blog-card.active .read-more-btn { display: none; }
+</style>
+
+<div class="hero-section">
+    <div class="quote-text">"İçinizdeki sese kulak verin, iyileşme orada başlar."</div>
+    <p style="letter-spacing: 3px; font-size: 0.9rem; color: #555;">KLİNİK PSİKOLOG SİBEL DOMDOMOĞULLARI</p>
+
+    <div class="services-grid">
+    {% for service in services %}
+        <div class="service-card">
+            <div class="close-btn"><i class="fas fa-times"></i></div>
+            <i class="{{ service.icon }} service-icon"></i>
+            <h3>{{ service.title }}</h3>
+            <p class="service-preview">{{ service.description|truncatewords:20 }}</p>
+            <a class="read-more-btn">Detaylı Bilgi &rarr;</a>
+            <div class="service-details">{{ service.description|linebreaks }}
+                <div style="margin-top: 30px; text-align: center;">
+                    <a href="{% url 'appointment' %}" style="background: #2c3e50; color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none;">Hemen Randevu Al</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div style="width: 100%; text-align: center; color: #999;"><p>Hizmetler yükleniyor...</p></div>
+    {% endfor %}
+    </div>
+</div>
+
+<section id="hakkimda" style="padding: 100px 20px; background: white;">
+    <div style="max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 50px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+            <img src="{% static 'img/sibel-profil.jpg' %}" style="width: 100%; border-radius: 20px; box-shadow: 20px 20px 0px #8f9779; object-fit: cover;">
+        </div>
+        <div style="flex: 1.5; min-width: 300px;">
+            <h4 style="color: #8f9779; font-weight: 600; letter-spacing: 2px;">TANIŞALIM</h4>
+            <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: #2c3e50; margin: 20px 0;">Hikayeniz, dinlenmeyi hak ediyor.</h2>
+            <p style="color: #666; line-height: 1.8; margin-bottom: 30px;">Merhaba, ben Sibel. Her insanın içinde keşfedilmeyi bekleyen bir güç olduğuna inanıyorum...</p>
+            <a href="{% url 'about' %}" style="padding: 15px 40px; background: #2c3e50; color: white; text-decoration: none; border-radius: 50px; transition: 0.3s;">Devamını Oku &rarr;</a>
+        </div>
+    </div>
+</section>
+
+<section id="blog" style="padding: 100px 20px; background: #f9f9f9; position: relative;">
+    <div class="blog-overlay"></div> <div style="max-width: 1200px; margin: 0 auto;">
+        <h2 style="text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; margin-bottom: 50px;">Son Yazılar</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+            {% for blog in latest_blogs %}
+            <article class="blog-card">
+                <div class="close-btn"><i class="fas fa-times"></i></div>
+                {% if blog.image %}<img src="{{ blog.image.url }}" class="blog-img">{% else %}<img src="https://images.unsplash.com/photo-1493836512294-502baa1986e2?q=80&w=1000" class="blog-img">{% endif %}
+                <div class="blog-content">
+                    <span style="color: #8f9779; font-size: 0.8rem; font-weight: bold;">BLOG</span>
+                    <h3 style="margin: 10px 0; font-family: 'Cormorant Garamond';">{{ blog.title }}</h3>
+                    <p style="color: #777; font-size: 0.9rem;">{{ blog.short_description|truncatewords:15 }}</p>
+                    <a class="read-more-btn">İncele</a>
+                    <div class="service-details blog-details">{{ blog.content|linebreaks }}</div>
+                </div>
+            </article>
+            {% empty %}
+                <p style="text-align: center; color: #999;">Henüz blog yazısı bulunmuyor.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<footer style="background: #1a252f; color: #bdc3c7; padding: 60px 20px 20px 20px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px;">
+        <div>
+            <h3 style="color: white; margin-bottom: 20px;">PSK. SİBEL DOMDOMOĞULLARI</h3>
+            <p style="font-size: 0.9rem;">Ruh sağlığı bir varış noktası değil, bir yolculuktur.</p>
+            
+            <div style="margin-top: 20px; font-size: 1.5rem;">
+                <a href="https://youtube.com/@psikologsibeldomdomogullari?si=0FuWTcbBagxDNzT1" target="_blank" style="color: white; margin-right: 15px; transition: 0.3s;"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.instagram.com/psk.sibeldomdomogullari/" target="_blank" style="color: white; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+        <div>
+            <h3 style="color: white; margin-bottom: 20px;">Hızlı Linkler</h3>
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin-bottom: 10px;"><a href="#" style="color: inherit; text-decoration: none;">Anasayfa</a></li>
+                <li style="margin-bottom: 10px;"><a href="#hakkimda" style="color: inherit; text-decoration: none;">Hakkımda</a></li>
+            </ul>
+        </div>
+        <div>
+            <h3 style="color: white; margin-bottom: 20px;">İletişim</h3>
+            <p><i class="fas fa-envelope"></i> psk.sibeldomdomogullari@gmail.com</p>
+        </div>
+    </div>
+    <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 40px; padding-top: 20px; text-align: center; font-size: 0.8rem;">
+        &copy; 2026 Psk. Sibel Domdomoğulları. Tüm hakları saklıdır.
+    </div>
+</footer>
+
+<script>
+    gsap.registerPlugin(ScrollTrigger);
+    
+    // Popup İşlemleri
+    const overlay = document.querySelector('.blog-overlay');
+    const body = document.body;
+    function openCard(card) { card.classList.add('active'); overlay.classList.add('active'); body.style.overflow = 'hidden'; }
+    function closeAllCards() { document.querySelectorAll('.service-card.active, .blog-card.active').forEach(c => c.classList.remove('active')); overlay.classList.remove('active'); body.style.overflow = 'auto'; }
+    
+    document.querySelectorAll('.read-more-btn').forEach(btn => {
+        btn.addEventListener('click', function() { 
+            const card = this.closest('.service-card') || this.closest('.blog-card');
+            if(card) openCard(card);
+        });
+    });
+    document.querySelectorAll('.close-btn').forEach(btn => btn.addEventListener('click', closeAllCards));
+    overlay.addEventListener('click', closeAllCards);
+    document.addEventListener('keydown', function(e) { if(e.key === 'Escape') closeAllCards(); });
+
+    // Smooth Scroll (Lenis)
+    const lenis = new Lenis({
+        duration: 1.0, 
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        direction: 'vertical', gestureDirection: 'vertical', smooth: true,
+        mouseMultiplier: 1, smoothTouch: false, touchMultiplier: 2,
+    });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+</script>
+{% endblock %}

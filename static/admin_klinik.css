@@ -1,0 +1,298 @@
+/* SİTENİN ORİJİNAL LÜKS FONTLARI */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@400;500;600&display=swap');
+
+/* 1. GENEL YAPI: Sitenin Krem Rengi ve Fontları */
+body, .wrapper, .content-wrapper, .main-header {
+    background-color: #fdfcf9 !important; /* Sitenin krem arkaplanı */
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+/* 2. SOL MENÜ: Zarif ve Koyu (Lacivert) */
+.main-sidebar {
+    background-color: #1a252f !important;
+    box-shadow: 5px 0 20px rgba(0,0,0,0.05) !important;
+}
+.brand-link {
+    background-color: #1a252f !important;
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 1.6rem !important;
+    color: #8f9779 !important; /* Sibel Yeşili */
+    border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+    text-align: center;
+    padding: 20px 0 !important;
+}
+.nav-sidebar .nav-item .nav-link {
+    color: rgba(255,255,255,0.7) !important;
+    font-size: 0.95rem !important;
+    border-radius: 10px !important;
+    margin: 5px 15px !important;
+    transition: 0.3s !important;
+}
+.nav-sidebar .nav-item .nav-link:hover, 
+.nav-sidebar .nav-item .nav-link.active {
+    background-color: #8f9779 !important; /* Seçili menü yeşil olsun */
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(143,151,121,0.3) !important;
+}
+
+/* 3. BAŞLIKLAR VE KARTLAR */
+h1, h2, h3, h4, .card-title {
+    font-family: 'Cormorant Garamond', serif !important;
+    color: #2c3e50 !important;
+    font-weight: 700 !important;
+    font-size: 2rem !important;
+}
+.card {
+    border: none !important;
+    border-radius: 20px !important; /* Sitedeki gibi yuvarlak köşeli kartlar */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.03) !important;
+    padding: 15px !important;
+    background: white !important;
+}
+.card-header {
+    background: transparent !important;
+    border-bottom: 2px solid #f4f1ea !important;
+}
+
+/* 4. BUTONLAR: Klasikten Kurtuluş (Yuvarlak ve Estetik) */
+.btn {
+    border-radius: 50px !important; /* Tam yuvarlak butonlar */
+    padding: 10px 25px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    border: none !important;
+    text-transform: uppercase !important;
+    font-size: 0.8rem !important;
+    transition: all 0.3s ease !important;
+}
+/* Ana Aksiyon Butonları (Ekle, Kaydet) */
+.btn-success, .btn-primary, .bg-primary, .bg-success {
+    background-color: #8f9779 !important;
+    color: white !important;
+    box-shadow: 0 5px 15px rgba(143,151,121,0.3) !important;
+}
+.btn-success:hover, .btn-primary:hover {
+    background-color: #2c3e50 !important; /* Üstüne gelince lacivert */
+    transform: translateY(-2px) !important;
+}
+/* Silme Butonu */
+.btn-danger {
+    background-color: #e74c3c !important;
+    box-shadow: 0 5px 15px rgba(231,76,60,0.2) !important;
+}
+
+/* 5. TABLOLAR (Temiz ve Çizgisiz) */
+.table th {
+    border-top: none !important;
+    border-bottom: 2px solid #f4f1ea !important;
+    color: #888 !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 1px;
+}
+.table td {
+    border-top: none !important;
+    border-bottom: 1px solid #f9f9f9 !important;
+    vertical-align: middle !important;
+    color: #555 !important;
+}
+
+/* --- YENİ: SOL MENÜYÜ İPTAL EDİP ÜST MENÜ (HEADER) YAPISI KURMA --- */
+.main-sidebar, .nav-item[data-widget="pushmenu"] {
+    display: none !important;
+}
+
+/* 2. İçeriği Tam Ekrana Yay (Sol menünün bıraktığı boşluğu kapat) */
+.content-wrapper, .main-footer, .main-header {
+    margin-left: 0 !important;
+}
+
+/* 3. Üst Menüyü (Header) Lüks Bir Site Menüsü Gibi Yap */
+.main-header {
+    background-color: #fdfcf9 !important; /* Sitenin kendi krem rengi */
+    border-bottom: 2px solid #f4f1ea !important;
+    padding: 10px 30px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03) !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Üst Menü Linkleri (Randevular, Blog vs.) */
+.main-header .navbar-nav .nav-link {
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+    font-family: 'Cormorant Garamond', serif !important; /* Lüks tırnaklı fontumuz */
+    font-size: 1.3rem !important;
+    margin: 0 5px !important;
+    padding: 8px 20px !important;
+    border-radius: 50px !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Menü linklerinin üzerine gelince Sibel Yeşili olsun */
+.main-header .navbar-nav .nav-link:hover {
+    background-color: #8f9779 !important; 
+    color: white !important;
+}
+
+/* Profil / Çıkış Butonu (Sağ Üstteki) */
+.main-header .navbar-nav.ml-auto .nav-link {
+    font-family: 'Montserrat', sans-serif !important; /* Modern font */
+    font-size: 0.85rem !important;
+    background-color: #1a252f !important; /* Koyu Lacivert */
+    color: white !important;
+    border-radius: 50px !important;
+    padding: 10px 25px !important;
+    letter-spacing: 0.5px !important;
+}
+
+/* Çıkış butonunun üzerine gelince uyarı (kırmızı) rengi alsın */
+.main-header .navbar-nav.ml-auto .nav-link:hover {
+    background-color: #e74c3c !important; 
+}
+
+/* SOL MENÜYÜ KÖKÜNDEN İPTAL ET */
+aside.main-sidebar, .nav-item[data-widget="pushmenu"] {
+    display: none !important;
+    width: 0 !important;
+}
+
+/* EKRANI TAM GENİŞLİĞE YAY (Sol menünün boşluğunu kapat) */
+.content-wrapper, .main-footer, .main-header {
+    margin-left: 0 !important;
+    width: 100% !important;
+}
+
+/* =========================================================
+   JAZZMIN'İ YOK ET, ÖZEL KLİNİK PANELİNİ GETİR
+   ========================================================= */
+
+/* 1. O SAÇMA YÖNLENDİRME MENÜSÜNÜ (Giriş > Core > Danışanlar) GİZLE */
+ol.breadcrumb { 
+    display: none !important; 
+}
+
+/* 2. SAYFA BAŞLIKLARINI LÜKSLEŞTİR (Danışanlar, Randevular vs.) */
+.content-header {
+    padding: 40px 30px 10px !important;
+    background: transparent !important;
+}
+.content-header h1 {
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 2.8rem !important;
+    color: #2c3e50 !important;
+    font-weight: 700 !important;
+    letter-spacing: -1px !important;
+}
+
+/* 3. ANA BEYAZ KART (Arka plandaki çerçeve) */
+.card {
+    border-radius: 20px !important;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.03) !important;
+    border: none !important;
+    padding: 20px !important;
+    background: #ffffff !important;
+    margin-top: 20px !important;
+}
+
+/* 4. TABLOLARI "MODERN KARTLARA" ÇEVİRME */
+.table-responsive {
+    border: none !important;
+}
+table.table {
+    border-collapse: separate !important;
+    border-spacing: 0 12px !important; /* Satırlar arasına boşluk koyar */
+}
+
+/* Tablo Başlıkları (Adı, Soyadı, Telefon vs.) */
+table.table thead th {
+    border: none !important;
+    background: transparent !important;
+    color: #8f9779 !important; /* Sibel Yeşili */
+    font-size: 0.8rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    padding: 10px 20px !important;
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+/* Her Bir Tablo Satırı (Havada uçan kart efekti) */
+table.table tbody tr {
+    background: #fdfcf9 !important; /* Çok hafif krem */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.02) !important;
+    border-radius: 15px !important;
+    transition: all 0.3s ease !important;
+}
+
+table.table tbody tr:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 25px rgba(143,151,121,0.1) !important; /* Yeşile çalan zarif gölge */
+    background: #ffffff !important;
+}
+
+/* Tablo Hücreleri */
+table.table tbody td {
+    border: none !important;
+    padding: 20px !important;
+    vertical-align: middle !important;
+    color: #444 !important;
+    font-weight: 500 !important;
+}
+table.table tbody td:first-child {
+    border-top-left-radius: 15px !important;
+    border-bottom-left-radius: 15px !important;
+}
+table.table tbody td:last-child {
+    border-top-right-radius: 15px !important;
+    border-bottom-right-radius: 15px !important;
+}
+
+/* 5. UYARI KUTULARI VE BİLGİLENDİRMELER (Sarı/Yeşil Kutular) */
+.alert {
+    border-radius: 15px !important;
+    border: none !important;
+    font-family: 'Montserrat', sans-serif !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important;
+}
+
+/* Alt kısımdaki "2 Kullanıcılar" yazan bölüm */
+.paginator {
+    border-top: none !important;
+    padding-top: 20px !important;
+    color: #999 !important;
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+/* 6. AÇILIR MENÜYÜ VE GEREKSİZ JAZZMIN ALTLIĞINI GİZLE */
+.actions {
+    display: none !important;
+}
+footer.main-footer {
+    display: none !important;
+}
+.content-wrapper {
+    padding-bottom: 50px !important;
+}
+
+/* =========================================================
+   GÖZ KANATAN DETAYLARA KESİN ÇÖZÜM
+   ========================================================= */
+
+/* Sol Üstteki 3 Çizgili (Hamburger) İkonu Tamamen Yok Et */
+a[data-widget="pushmenu"], 
+.nav-item [data-widget="pushmenu"],
+.fas.fa-bars {
+    display: none !important;
+}
+
+/* Sağ Üstteki Siyah Kullanıcı İkonunu ve Menüsünü Tamamen Yok Et */
+ul.navbar-nav.ml-auto {
+    display: none !important;
+}
+
+/* Başlığın Yanındaki Gereksiz Çizgiyi Kaldır (Dashboard yazısının yanındaki) */
+.content-header h1::after, .content-header h1::before {
+    display: none !important;
+    content: none !important;
+}

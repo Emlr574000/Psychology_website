@@ -1,0 +1,50 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div style="background: white; padding: 30px; border-radius: 10px; max-width: 800px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    
+    <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 20px;">
+        🚀 Randevu Onaylama Ekranı
+    </h2>
+
+    <p style="font-size: 1.1rem; color: #555;">
+        Aşağıdaki <strong>{{ appointments|length }}</strong> randevuyu onaylamak üzeresiniz.
+        <br>Lütfen danışanlara hangi kanaldan bildirim gitmesini istediğinizi seçin:
+    </p>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        
+        <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #eee;">
+            <label style="font-size: 1.2rem; margin-right: 30px; cursor: pointer; display: inline-flex; align-items: center;">
+                <input type="checkbox" name="send_email" checked style="width: 20px; height: 20px; margin-right: 10px;">
+                📧 E-Posta Gönder
+            </label>
+
+            <label style="font-size: 1.2rem; cursor: pointer; display: inline-flex; align-items: center;">
+                <input type="checkbox" name="send_sms" checked style="width: 20px; height: 20px; margin-right: 10px;">
+                📱 SMS Gönder (Simülasyon)
+            </label>
+        </div>
+
+        {% for app in appointments %}
+            <input type="hidden" name="_selected_action" value="{{ app.pk }}" />
+            
+            <div style="padding: 10px; border-bottom: 1px solid #eee; font-size: 0.95rem;">
+                <strong>{{ app.client_name }}</strong> - {{ app.date }} {{ app.time }} 
+                <span style="color: #7f8c8d;">({{ app.client_email }} | {{ app.client_phone }})</span>
+            </div>
+        {% endfor %}
+
+        <input type="hidden" name="action" value="confirm_appointments" />
+        <input type="hidden" name="apply" value="1" />
+
+        <div style="margin-top: 30px;">
+            <button type="submit" style="background: #27ae60; color: white; border: none; padding: 12px 30px; border-radius: 5px; font-size: 1rem; cursor: pointer; font-weight: bold;">
+                ✅ İşlemi Tamamla ve Gönder
+            </button>
+            <a href="#" onclick="window.history.back();" style="margin-left: 20px; color: #e74c3c; text-decoration: none;">İptal Et</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

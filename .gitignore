@@ -1,0 +1,16 @@
+# Python önbellek dosyaları
+__pycache__/
+*.py[cod]
+
+# Sanal ortam
+venv/
+env/
+
+# Gizli Kasa (Şifreler)
+.env
+
+# Veritabanı (İçinde müşteri verileri var, asla internete çıkmamalı!)
+db.sqlite3
+
+# Yüklenen Medyalar
+media/

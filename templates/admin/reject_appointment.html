@@ -1,0 +1,42 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div style="background: white; padding: 30px; border-radius: 10px; max-width: 800px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 5px solid #e74c3c;">
+    
+    <h2 style="color: #c0392b; border-bottom: 2px solid #e74c3c; padding-bottom: 10px; margin-bottom: 20px;">
+        ❌ Randevu Reddetme Ekranı
+    </h2>
+
+    <p style="font-size: 1.1rem; color: #555;">
+        Seçilen <strong>{{ appointments|length }}</strong> randevuyu iptal etmek üzeresiniz.
+        <br>Lütfen danışana gönderilecek mail için bir <strong>sebep belirtin:</strong>
+    </p>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        
+        <div style="margin: 20px 0;">
+            <label style="font-weight: bold; display: block; margin-bottom: 10px;">Reddetme Sebebi / Mesajınız:</label>
+            <textarea name="rejection_reason" rows="5" style="width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 5px; font-family: sans-serif; font-size: 1rem;" placeholder="Örn: Maalesef belirtilen saatte acil bir durum nedeniyle randevunuzu iptal etmek zorundayım. Lütfen başka bir tarih seçiniz.">Maalesef belirtilen tarih ve saatte uygunluk durumum değiştiği için randevunuzu onaylayamıyorum. Anlayışınız için teşekkürler.</textarea>
+        </div>
+
+        {% for app in appointments %}
+            <input type="hidden" name="_selected_action" value="{{ app.pk }}" />
+            
+            <div style="padding: 10px; background: #fdf0ed; border-bottom: 1px solid #eee; color: #c0392b;">
+                <strong>{{ app.client_name }}</strong> - {{ app.date }} {{ app.time }}
+            </div>
+        {% endfor %}
+
+        <input type="hidden" name="action" value="reject_appointments" />
+        <input type="hidden" name="apply" value="1" />
+
+        <div style="margin-top: 30px;">
+            <button type="submit" style="background: #c0392b; color: white; border: none; padding: 12px 30px; border-radius: 5px; font-size: 1rem; cursor: pointer; font-weight: bold;">
+                🚫 Reddet ve Mail Gönder
+            </button>
+            <a href="#" onclick="window.history.back();" style="margin-left: 20px; color: #7f8c8d; text-decoration: none;">Vazgeç</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* --- RANDEVU SAYFASI TASARIMI --- */
+    .appointment-section {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Mobilde taşmasın diye */
+        padding: 40px 20px;
+        background-color: #f9f9f9;
+    }
+
+    .form-container {
+        width: 100%;
+        max-width: 600px;
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border: 1px solid #eee;
+        margin-top: 20px;
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .form-header h2 {
+        font-family: 'Cormorant Garamond', serif;
+        color: #2c3e50;
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    .form-header p {
+        color: #7f8c8d;
+        font-size: 0.95rem;
+    }
+
+    /* FORM ELEMANLARI */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .form-group input, 
+    .form-group select, 
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: 'Montserrat', sans-serif;
+        transition: border 0.3s, box-shadow 0.3s;
+        background-color: #fff;
+    }
+
+    .form-group input:focus, 
+    .form-group select:focus, 
+    .form-group textarea:focus {
+        border-color: #8f9779;
+        box-shadow: 0 0 0 3px rgba(143, 151, 121, 0.2);
+        outline: none;
+    }
+
+    /* Disabled (Pasif) alanlar gri olsun */
+    .form-group select:disabled {
+        background-color: #f0f0f0;
+        cursor: not-allowed;
+    }
+
+    /* Buton Tasarımı */
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+        margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+        background-color: #34495e;
+        transform: translateY(-2px);
+    }
+
+    /* Başarı Mesajı */
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #c3e6cb;
+        text-align: center;
+        font-weight: 500;
+    }
+</style>
+
+<div class="appointment-section">
+    <div class="form-container">
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-success">
+                    <i class="fas fa-check-circle"></i> {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="form-header">
+            <h2>Online Randevu Talebi</h2>
+            <p>Size uygun zamanı belirlemek için lütfen formu doldurun.</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Adınız Soyadınız</label>
+                <input type="text" name="name" placeholder="Örn: Ahmet Yılmaz" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Telefon Numaranız</label>
+                <input type="tel" name="phone" placeholder="0555 555 55 55" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> E-posta Adresiniz</label>
+                <input type="email" name="email" placeholder="ornek@mail.com" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-list"></i> Hizmet Seçimi</label>
+                <select name="service" required>
+                    <option value="" disabled selected>Lütfen bir hizmet seçiniz...</option>
+                    {% for service in services %}
+                        <option value="{{ service.title }}">{{ service.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-calendar-alt"></i> Randevu Tarihi</label>
+                <input type="date" id="datePicker" name="date" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-clock"></i> Müsait Saatler</label>
+                <select id="timeSlotSelect" name="time" required disabled>
+                    <option value="">Önce tarih seçiniz ⬆️</option>
+                </select>
+                <small id="slotLoading" style="display:none; color:#8f9779; margin-top:5px;">
+                    <i class="fas fa-spinner fa-spin"></i> Saatler kontrol ediliyor...
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-pen"></i> Notunuz (Opsiyonel)</label>
+                <textarea name="message" rows="3" placeholder="Belirtmek istediğiniz özel bir durum var mı?"></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Randevu Talebi Gönder</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // 1. Geçmiş tarihleri seçmeyi engelle
+    const dateInput = document.getElementById('datePicker');
+    dateInput.min = new Date().toISOString().split("T")[0];
+
+    // 2. Tarih değişince Backend'e sor
+    dateInput.addEventListener('change', function() {
+        const selectedDate = this.value;
+        const timeSelect = document.getElementById('timeSlotSelect');
+        const loading = document.getElementById('slotLoading');
+
+        if (selectedDate) {
+            // Yükleniyor moduna al
+            loading.style.display = 'block';
+            timeSelect.disabled = true;
+            timeSelect.innerHTML = '<option>Yükleniyor...</option>';
+
+            // AJAX İsteği At (API)
+            fetch(`/api/get-hours/?date=${selectedDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    loading.style.display = 'none';
+                    timeSelect.disabled = false;
+                    timeSelect.innerHTML = '<option value="" disabled selected>Bir saat seçiniz</option>';
+
+                    if(data.slots.length > 0) {
+                        data.slots.forEach(slot => {
+                            timeSelect.innerHTML += `<option value="${slot.value}">${slot.label}</option>`;
+                        });
+                    } else {
+                        timeSelect.innerHTML = '<option disabled>Bu tarihte boş yer yok 😔</option>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    loading.style.display = 'none';
+                    timeSelect.innerHTML = '<option>Hata oluştu, tekrar deneyin.</option>';
+                });
+        }
+    });
+</script>
+{% endblock %}

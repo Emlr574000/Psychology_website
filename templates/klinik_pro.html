@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klinik Pro | Karargah</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg: #0f1219; --panel: #1a1d24; --blue: #3b82f6; --green: #10b981; --red: #ef4444; --text: #f8fafc; --muted: #94a3b8; --border: rgba(255,255,255,0.05); }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* SIDEBAR */
+        .sidebar { width: 280px; border-right: 1px solid var(--border); padding: 32px 24px; display: flex; flex-direction: column; }
+        .nav-link { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; color: var(--muted); text-decoration: none; margin-bottom: 8px; font-weight: 500; transition: 0.3s; }
+        .nav-link:hover, .nav-link.active { background: var(--panel); color: var(--text); }
+        
+        /* MAIN AREA */
+        .main { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
+        .widget { background: var(--panel); border-radius: 24px; border: 1px solid var(--border); padding: 30px; margin-bottom: 24px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        
+        /* TABLES */
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        th { text-align: left; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; padding: 10px 15px; }
+        td { padding: 16px 15px; background: rgba(255,255,255,0.02); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        td:first-child { border-left: 1px solid var(--border); border-radius: 10px 0 0 10px; }
+        td:last-child { border-right: 1px solid var(--border); border-radius: 0 10px 10px 0; }
+
+        /* BUTTONS & FORMS */
+        .btn { padding: 10px 20px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+        .btn-blue { background: var(--blue); color: white; }
+        .btn-green { background: rgba(16, 185, 129, 0.1); color: var(--green); }
+        .btn-red { background: rgba(239, 68, 68, 0.1); color: var(--red); }
+        .btn-warn { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .form-control { width: 100%; background: var(--bg); border: 1px solid var(--border); color: white; border-radius: 10px; padding: 15px; font-family: inherit; margin-top: 10px; }
+        
+        /* SPLIT SCREEN & CHAT */
+        .split-screen { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; height: 600px; }
+        .chat-container { display: flex; height: 500px; gap: 20px; }
+        .chat-list { width: 300px; border-right: 1px solid var(--border); overflow-y: auto; padding-right: 15px; }
+        .chat-item { padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 10px; cursor: pointer; border: 1px solid transparent; }
+        .chat-item:hover { border-color: var(--blue); }
+        .chat-view { flex: 1; background: var(--bg); border-radius: 16px; padding: 25px; display: flex; flex-direction: column; }
+
+        /* MODAL EKRANI (İnceleme Pop-up'ı) */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; }
+        .modal-box { background: var(--panel); padding: 30px; border-radius: 20px; width: 500px; border: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <h2 style="color: var(--blue); margin-bottom: 40px;"><i class="fas fa-brain"></i> Klinik Pro</h2>
+        <nav>
+            <a href="{% url 'custom_dashboard_tab' 'genel' %}" class="nav-link {% if active_tab == 'genel' %}active{% endif %}"><i class="fas fa-chart-pie"></i> Genel Bakış</a>
+            <a href="{% url 'custom_dashboard_tab' 'danisanlar' %}" class="nav-link {% if active_tab == 'danisanlar' %}active{% endif %}"><i class="fas fa-address-book"></i> Yeni Başvurular</a>
+            <a href="{% url 'custom_dashboard_tab' 'seans_takvimi' %}" class="nav-link {% if active_tab == 'seans_takvimi' %}active{% endif %}"><i class="fas fa-calendar-alt"></i> Seans Takvimi</a>
+            <a href="{% url 'custom_dashboard_tab' 'seans_odasi' %}" class="nav-link {% if active_tab == 'seans_odasi' %}active{% endif %}"><i class="fas fa-video"></i> Canlı Seans Odası</a>
+            <a href="{% url 'custom_dashboard_tab' 'mesajlar' %}" class="nav-link {% if active_tab == 'mesajlar' %}active{% endif %}"><i class="fas fa-comment-dots"></i> Mesajlar</a>
+            <a href="{% url 'custom_dashboard_tab' 'blog' %}" class="nav-link {% if active_tab == 'blog' %}active{% endif %}"><i class="fas fa-file-alt"></i> Blog Yönetimi</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        
+        {% if active_tab == 'genel' %}
+        <div class="header"><h1>Genel Bakış</h1></div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
+            <div class="widget"><h3>Sıradaki Seans</h3>{% if siradaki_seans %}<p style="font-size: 1.5rem; font-weight: 700; color: var(--blue);">{{ siradaki_seans.time }} - {{ siradaki_seans.client_name }}</p>{% else %}<p>Planlı seans yok.</p>{% endif %}</div>
+            <div class="widget"><h3>Günün Seansları</h3><p style="font-size: 2.5rem; font-weight: 700;">{{ gunun_randevulari.count }}</p></div>
+            <div class="widget" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6);"><h3>Bekleyen Başvuru</h3><p style="font-size: 2.5rem; font-weight: 700;">{{ bekleyen_randevular.count }}</p></div>
+        </div>
+        {% endif %}
+
+        {% if active_tab == 'danisanlar' %}
+        <div class="header"><h1>Yeni Web Başvuruları</h1></div>
+        <div class="widget">
+            <table id="basvurular-table">
+                <thead><tr><th>Danışan Adı</th><th>Hizmet</th><th>Talep Edilen Tarih</th><th>İşlemler</th></tr></thead>
+                <tbody>
+                    {% for r in bekleyen_randevular %}
+                    <tr>
+                        <td><strong>{{ r.client_name }}</strong><br><span style="font-size:0.75rem; color:var(--muted);">${{ r.client_email }}</span></td>
+                        <td>{{ r.service }}</td>
+                        <td>{{ r.date }} <br> <span style="color: var(--blue);">{{ r.time }}</span></td>
+                        <td>
+                            <button class="btn btn-blue" onclick="openIslemModal('{{ r.id }}', '{{ r.client_name|escapejs }}', '{{ r.date }}', '{{ r.time }}', '{{ r.message|escapejs }}')"><i class="fas fa-search"></i> İncele & İşlem Yap</button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" style="text-align: center; color: var(--muted);">Şu an bekleyen başvuru bulunmuyor.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        {% if active_tab == 'seans_takvimi' %}
+        <div class="header"><h1>Seans Takvimi & Planlama</h1></div>
+        
+        {% if tarihsiz_onaylilar %}
+        <div class="widget" style="border-left: 4px solid #f59e0b;">
+            <h3 style="color: #f59e0b; margin-top: 0;"><i class="fas fa-exclamation-triangle"></i> Tarih Bekleyen (Pasif) Hastalar</h3>
+            <p style="font-size: 0.85rem; color: var(--muted);">Bu hastaları onayladınız ancak henüz tarih/saat belirlemediniz. Mail gitmedi.</p>
+            <table>
+                <tbody>
+                    {% for p in tarihsiz_onaylilar %}
+                    <tr>
+                        <td><strong>{{ p.client_name }}</strong></td>
+                        <td>{{ p.service }}</td>
+                        <td style="text-align: right;">
+                            <form method="POST" action="{% url 'tarih_ata' %}" style="display: flex; gap: 10px; justify-content: flex-end;">
+                                {% csrf_token %}
+                                <input type="hidden" name="app_id" value="{{ p.id }}">
+                                <input type="date" name="date" class="form-control" style="margin:0; padding:5px; width:auto;" required>
+                                <input type="time" name="time" class="form-control" style="margin:0; padding:5px; width:auto;" required>
+                                <button type="submit" class="btn btn-warn">Tarih Ata & Mail Gönder</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+            <div class="widget">
+                <h3>Yaklaşan Onaylı Seanslar</h3>
+                <table>
+                    <thead><tr><th>Tarih / Saat</th><th>Danışan</th><th>Durum</th></tr></thead>
+                    <tbody>
+                        {% for r in yaklasan_seanslar %}
+                        <tr>
+                            <td><strong style="color: var(--blue);">{{ r.date|date:"d M" }}</strong> | {{ r.time }}</td>
+                            <td>{{ r.client_name }}</td>
+                            <td><span style="color: var(--green); font-size: 0.8rem;">Aktif (Mail Gitti)</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3">Yaklaşan seans bulunmuyor.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="widget">
+                <h3 style="color: var(--blue);"><i class="fas fa-calendar-plus"></i> Hastaya Yeni Seans Belirle</h3>
+                <form method="POST" action="{% url 'yeni_seans_ekle' %}">
+                    {% csrf_token %}
+                    <select name="client_name" class="form-control" required>
+                        <option value="">Kayıtlı Hasta Seçin...</option>
+                        {% for isim in onayli_isimler %}<option value="{{ isim }}">{{ isim }}</option>{% endfor %}
+                    </select>
+                    <input type="date" name="date" id="takvimDate" class="form-control" required>
+                    <select name="time" id="takvimTime" class="form-control" required><option value="">Önce tarih seçin...</option></select>
+                    <button type="submit" class="btn btn-blue" style="width: 100%; margin-top: 20px;">Randevuyu Kaydet</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if active_tab == 'seans_odasi' %}
+        <div class="header">
+            <h1>Canlı Seans Odası</h1>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <h2 id="sessionTimer" style="margin: 0; color: var(--blue);">00:00:00</h2>
+                <button class="btn btn-blue" id="startBtn" onclick="toggleSession()"><i class="fas fa-play"></i> Başlat</button>
+            </div>
+        </div>
+        <div class="split-screen">
+            <div class="widget">
+                <h3>1. Danışan Geçmişi</h3>
+                
+                <select class="form-control" id="hastaSecici" style="margin-bottom: 20px;" onchange="loadPatientData(this.value)">
+                    <option value="">İşlem yapılacak hastayı seçin...</option>
+                    {% for isim in onayli_isimler %}
+                        <option value="{{ isim }}">{{ isim }}</option>
+                    {% endfor %}
+                </select>
+
+                <div id="gecmisNotlarContainer" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+                    <div style="background: rgba(255,255,255,0.03); padding: 15px; border-left: 3px solid var(--blue); border-radius: 8px;">
+                        <p style="margin: 0; font-size: 0.85rem; color: var(--muted);">Önce yukarıdan bir hasta seçin. Geçmiş seans kayıtları burada listelenecektir.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget" style="display: flex; flex-direction: column;">
+                <h3 id="anlikNotBaslik">2. Anlık Notlar</h3>
+                
+                <form method="POST" action="{% url 'seans_bitir' %}" style="display: flex; flex-direction: column; flex: 1;">
+                    {% csrf_token %}
+                    <input type="hidden" name="client_name" id="secilenHastaInput" required>
+                    
+                    <textarea name="note" class="form-control" style="flex: 1; resize: none; margin-bottom: 15px;" placeholder="Seans esnasında hastanın anlattıklarını buraya yazın..." required></textarea>
+                    
+                    <button type="submit" class="btn btn-green" style="width: 100%; justify-content: center;"><i class="fas fa-save"></i> Seansı Bitir ve Kaydet</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if active_tab == 'mesajlar' %}
+        <div class="header"><h1>İletişim Formu Mesajları</h1></div>
+        <div class="widget chat-container">
+            <div class="chat-list" id="chat-list-container">
+                {% for m in gelen_mesajlar %}
+                <div class="chat-item" onclick="openMessage('{{ m.name|escapejs }}', '{{ m.email|escapejs }}', '{{ m.message|escapejs }}')">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;"><strong style="font-size: 0.9rem;">{{ m.name }}</strong><span style="font-size: 0.7rem; color: var(--muted);">{{ m.created_at|date:"H:i" }}</span></div>
+                    <div style="font-size: 0.8rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ m.message }}</div>
+                </div>
+                {% empty %}
+                <p style="color: var(--muted); font-size: 0.85rem;">Henüz yeni mesaj yok.</p>
+                {% endfor %}
+            </div>
+            <div class="chat-view" id="chat-view-container">
+                <div style="color: var(--muted); text-align: center; margin-top: 50px;">
+                    <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                    <p>Okumak için soldan bir mesaj seçin.</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if active_tab == 'blog' %}
+        <div class="header">
+            <h1>Blog İçerikleri</h1>
+            <a href="/admin/core/blog/add/" target="_blank" class="btn btn-blue"><i class="fas fa-plus"></i> Yeni Yazı Ekle</a>
+        </div>
+        <div class="widget">
+            <table>
+                <thead><tr><th>Yazı Başlığı</th><th>Yayın Tarihi</th><th>Durum</th><th>İşlemler</th></tr></thead>
+                <tbody>
+                    {% for b in bloglar %}
+                    <tr>
+                        <td><strong>{{ b.title }}</strong></td>
+                        <td>{{ b.created_at|date:"d M Y" }}</td>
+                        <td><span style="background: rgba(16, 185, 129, 0.1); color: var(--green); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem;">Yayında</span></td>
+                        <td><a href="/admin/core/blog/{{ b.pk }}/change/" target="_blank" class="btn btn-green"><i class="fas fa-pen"></i> Düzenle</a></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" style="text-align: center; color: var(--muted);">Henüz yayınlanmış bir blog yazısı yok.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+    </main>
+
+    <div id="islemModal" class="modal-overlay">
+        <div class="modal-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: var(--blue);" id="modalName">İsim</h2>
+                <button onclick="closeModal()" style="background:transparent; border:none; color:white; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <p style="font-size: 0.8rem; color: var(--muted); margin: 0 0 5px 0;">Danışan Mesajı / Şikayeti:</p>
+                <p id="modalMsg" style="margin: 0; font-size: 0.95rem; line-height: 1.5;">Mesaj içeriği...</p>
+            </div>
+
+            <form method="POST" action="{% url 'randevu_islem_post' %}">
+                {% csrf_token %}
+                <input type="hidden" name="app_id" id="modalAppId">
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.8rem; color: var(--muted);">İlk Seans Tarihi (Zorunlu Değil)</label>
+                        <input type="date" name="date" id="modalDate" class="form-control" style="margin-top: 5px; padding: 10px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.8rem; color: var(--muted);">Saat</label>
+                        <input type="time" name="time" id="modalTime" class="form-control" style="margin-top: 5px; padding: 10px;">
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button type="submit" name="islem" value="onayla_tarihli" class="btn btn-blue" style="justify-content: center; padding: 12px;"><i class="fas fa-check-double"></i> Onayla, Tarih Ver & Mail At</button>
+                    <button type="submit" name="islem" value="onayla_tarihsiz" class="btn btn-warn" style="justify-content: center; padding: 12px;"><i class="fas fa-clock"></i> Sadece Onayla (Hastayı Beklet, Mail Atma)</button>
+                    <button type="submit" name="islem" value="reddet" class="btn btn-red" style="justify-content: center; padding: 12px;"><i class="fas fa-times"></i> Reddet & İptal Maili At</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal İşlemleri
+        function openIslemModal(id, name, date, time, msg) {
+            document.getElementById('modalAppId').value = id;
+            document.getElementById('modalName').innerText = name;
+            document.getElementById('modalMsg').innerText = msg || "Müşteri özel bir mesaj bırakmadı.";
+            if(date !== 'None') document.getElementById('modalDate').value = date;
+            if(time !== 'None') document.getElementById('modalTime').value = time;
+            document.getElementById('islemModal').style.display = 'flex';
+        }
+        function closeModal() { document.getElementById('islemModal').style.display = 'none'; }
+
+        // AJAX: Başvuruları Canlı Yenileme (Cache: no-store kullanıldı)
+        function fetchLiveAppointments() {
+            if (window.location.href.includes('danisanlar')) {
+                fetch('/admin/api/appointments/', { cache: "no-store" })
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#basvurular-table tbody');
+                    if (!tbody) return;
+                    tbody.innerHTML = ''; 
+                    if (data.appointments.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--muted);">Şu an bekleyen başvuru bulunmuyor.</td></tr>';
+                    } else {
+                        data.appointments.forEach(r => {
+                            tbody.insertAdjacentHTML('beforeend', `
+                            <tr>
+                                <td><strong>${r.client_name}</strong><br><span style="font-size:0.75rem; color:var(--muted);">${r.client_email}</span></td>
+                                <td>${r.service}</td>
+                                <td>${r.date} <br> <span style="color: var(--blue);">${r.time}</span></td>
+                                <td>
+                                    <button class="btn btn-blue" onclick="openIslemModal('${r.id}', '${r.client_name}', '${r.date}', '${r.time}', '${r.message}')"><i class="fas fa-search"></i> İncele & İşlem Yap</button>
+                                </td>
+                            </tr>`);
+                        });
+                    }
+                });
+            }
+        }
+        setInterval(fetchLiveAppointments, 3000);
+
+        // Mesaj Gösterme
+        function openMessage(name, email, text) {
+            const chatView = document.getElementById('chat-view-container');
+            if (chatView) {
+                chatView.innerHTML = `<div style="border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px;"><h3 style="margin: 0;">${name}</h3><p style="margin: 5px 0 0; font-size: 0.8rem; color: var(--muted);"><i class="fas fa-envelope"></i> ${email}</p></div><div style="flex: 1; overflow-y: auto;"><p style="font-size: 0.9rem; line-height: 1.6;">"${text}"</p></div><div style="display: flex; gap: 10px; margin-top: 20px;"><a href="mailto:${email}" class="btn btn-blue" style="width: 100%; justify-content: center;"><i class="fas fa-reply"></i> E-Posta ile Yanıtla</a></div>`;
+            }
+        }
+
+        // Seans Odası Kronometresi
+        let timerInterval; let seconds = 0; let running = false;
+        function toggleSession() {
+            if (!running) {
+                running = true;
+                document.getElementById('startBtn').innerHTML = '<i class="fas fa-pause"></i> Duraklat';
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    let h = Math.floor(seconds / 3600), m = Math.floor((seconds % 3600) / 60), s = seconds % 60;
+                    document.getElementById('sessionTimer').innerText = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                }, 1000);
+            } else {
+                running = false;
+                document.getElementById('startBtn').innerHTML = '<i class="fas fa-play"></i> Devam Et';
+                clearInterval(timerInterval);
+            }
+        }
+
+        // Dolu Saatleri Gizleyen Akıllı Takvim
+        function setupDynamicTimeSelect(dateInputId, timeSelectId) {
+            const dateInput = document.getElementById(dateInputId);
+            if(dateInput) {
+                dateInput.addEventListener('change', function() {
+                    fetch('/api/get-hours/?date=' + this.value)
+                    .then(res => res.json())
+                    .then(data => {
+                        let timeSelect = document.getElementById(timeSelectId);
+                        timeSelect.innerHTML = '<option value="">Saat Seçin</option>';
+                        data.slots.forEach(slot => { timeSelect.innerHTML += `<option value="${slot.value}">${slot.label}</option>`; });
+                    });
+                });
+            }
+        }
+        setupDynamicTimeSelect('takvimDate', 'takvimTime');
+        setupDynamicTimeSelect('odaDate', 'odaTime');
+    // --- HASTA GEÇMİŞİNİ VE SEANS SAYISINI CANLI ÇEKEN SİSTEM ---
+        function loadPatientData(clientName) {
+            // 1. Sağ taraftaki gizli inputa hasta adını yaz ki not doğru kişiye gitsin
+            document.getElementById('secilenHastaInput').value = clientName;
+            
+            // Eğer boş seçim yapıldıysa temizle
+            if (!clientName) {
+                document.getElementById('gecmisNotlarContainer').innerHTML = '<div style="background: rgba(255,255,255,0.03); padding: 15px; border-left: 3px solid var(--blue); border-radius: 8px;"><p style="margin: 0; font-size: 0.85rem; color: var(--muted);">Önce yukarıdan bir hasta seçin...</p></div>';
+                document.getElementById('anlikNotBaslik').innerText = '2. Anlık Notlar';
+                return;
+            }
+
+            // 2. Arka plana koş ve bu hastanın geçmiş notlarını getir
+            fetch('/admin/api/notes/?client_name=' + encodeURIComponent(clientName))
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('gecmisNotlarContainer');
+                container.innerHTML = ''; // Eski yazıları sil
+                
+                // Sağ taraftaki başlığı güncelle (Örn: 2. Anlık Notlar (3. Seans))
+                document.getElementById('anlikNotBaslik').innerText = `2. Anlık Notlar (${data.next_session}. Seans)`;
+
+                if (data.notes.length === 0) {
+                    container.innerHTML = '<p style="color: var(--green); font-size: 0.85rem;"><i class="fas fa-info-circle"></i> Bu hastanın ilk seansı. Henüz geçmiş not bulunmuyor.</p>';
+                } else {
+                    // Geçmiş notları döngüyle ekrana bas
+                    data.notes.forEach(note => {
+                        container.insertAdjacentHTML('beforeend', `
+                        <div style="background: rgba(255,255,255,0.03); padding: 15px; border-left: 3px solid var(--blue); border-radius: 8px; margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <strong style="color: var(--blue); font-size: 0.85rem;">${note.seans_no}. Seans</strong>
+                                <span style="color: var(--muted); font-size: 0.75rem;">${note.tarih}</span>
+                            </div>
+                            <p style="margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--text);">${note.not_icerigi}</p>
+                        </div>
+                        `);
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>

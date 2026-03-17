@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* BLOG HEADER */
+    .blog-header { text-align: center; padding: 150px 20px 60px; background: #f9f9f9; }
+    .blog-header h1 { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; color: #2c3e50; }
+
+    /* BLOG KARTLARI (GRID) */
+    .blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; padding: 50px 20px; }
+    
+    .blog-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; display: flex; flex-direction: column; transition: all 0.4s; height: 100%; }
+    
+    .blog-img { width: 100%; height: 220px; object-fit: cover; }
+    .blog-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+    .blog-date { font-size: 0.8rem; color: #8f9779; margin-bottom: 5px; font-weight: 600; }
+    
+    .read-more-btn { margin-top: auto; color: #2c3e50; font-weight: 600; text-decoration: none; border-bottom: 1px solid #2c3e50; padding-bottom: 2px; transition: 0.3s; cursor: pointer; }
+
+    /* GİZLİ DETAYLAR & POPUP MODU */
+    .blog-details { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; color: #555; line-height: 1.8; text-align: justify; white-space: normal; }
+    .blog-details br { display: none; } /* Boşlukları temizle */
+
+    .blog-card.active { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) !important; width: 90%; max-width: 800px; max-height: 90vh; z-index: 1001; overflow-y: auto; }
+    .blog-card.active .blog-details, .blog-card.active .close-btn { display: block; }
+    .blog-card.active .read-more-btn { display: none; }
+
+    .close-btn { display: none; position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.7); color: white; width: 40px; height: 40px; border-radius: 50%; text-align: center; line-height: 40px; cursor: pointer; z-index: 1002; }
+    .blog-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.9); z-index: 1000; display: none; backdrop-filter: blur(5px); }
+    .blog-overlay.active { display: block; }
+</style>
+
+<div class="blog-overlay"></div>
+
+<div class="blog-header">
+    <h1>Blog & Makaleler</h1>
+    <p style="color: #777; font-size: 1.1rem; letter-spacing: 1px;">Ruh sağlığına dair güncel yazılar ve notlar.</p>
+</div>
+
+<div class="blog-grid">
+    {% for blog in blogs %}
+    <article class="blog-card">
+        <div class="close-btn"><i class="fas fa-times"></i></div>
+        
+        {% if blog.image %}
+            <img src="{{ blog.image.url }}" class="blog-img">
+        {% else %}
+            <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=1000" class="blog-img">
+        {% endif %}
+
+        <div class="blog-content">
+            <span class="blog-date">{{ blog.created_at|date:"d M Y" }}</span>
+            <h3 style="margin: 10px 0; font-family: 'Cormorant Garamond'; font-size: 1.5rem;">{{ blog.title }}</h3>
+            <p style="color: #666; font-size: 0.95rem;">{{ blog.short_description|truncatewords:15 }}</p>
+            
+            <a class="read-more-btn">Yazıyı Oku &rarr;</a>
+            
+            <div class="blog-details">
+                {{ blog.content|linebreaks }}
+            </div>
+        </div>
+    </article>
+    {% empty %}
+        <p style="text-align: center; width: 100%; grid-column: 1/-1;">Henüz blog yazısı eklenmemiş.</p>
+    {% endfor %}
+</div>
+
+<script>
+    const overlay = document.querySelector('.blog-overlay');
+    const body = document.body;
+
+    function openCard(card) { card.classList.add('active'); overlay.classList.add('active'); body.style.overflow = 'hidden'; }
+    function closeAllCards() { document.querySelectorAll('.blog-card.active').forEach(c => c.classList.remove('active')); overlay.classList.remove('active'); body.style.overflow = 'auto'; }
+
+    document.querySelectorAll('.read-more-btn').forEach(btn => {
+        btn.addEventListener('click', function() { openCard(this.closest('.blog-card')); });
+    });
+    document.querySelectorAll('.close-btn').forEach(btn => btn.addEventListener('click', closeAllCards));
+    overlay.addEventListener('click', closeAllCards);
+    document.addEventListener('keydown', function(e) { if(e.key === 'Escape') closeAllCards(); });
+</script>
+
+{% endblock %}
