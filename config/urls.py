@@ -27,6 +27,8 @@ urlpatterns = [
     path('blog/', views.blog_list, name='blog_list'),
     path('terapi/<int:pk>/', views.service_detail, name='service_detail'),
     path('api/get-hours/', views.get_available_hours, name='get_available_hours'),
+    # urls.py dosyanın içine (urlpatterns listesine) şunu ekle:
+    path('basvuru-sil/<int:id>/', views.basvuru_sil, name='basvuru_sil'),
 ]
 
 if settings.DEBUG:

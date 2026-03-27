@@ -46,7 +46,7 @@ class Blog(models.Model):
     title = models.CharField(max_length=200, verbose_name="Blog Başlığı")
     short_description = models.TextField(verbose_name="Kısa Açıklama (Önizleme)", max_length=300)
     content = models.TextField(verbose_name="İçerik (Uzun Yazı)")
-    image = models.ImageField(upload_to='blog_images/', verbose_name="Kapak Resmi")
+    image = models.ImageField(upload_to='blog_images/', null=True, blank=True, verbose_name="Blog Görseli")    
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Oluşturulma Tarihi")
     is_active = models.BooleanField(default=True, verbose_name="Yayında mı?")
 

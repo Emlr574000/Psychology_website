@@ -15,7 +15,18 @@ def index(request):
         'services': Service.objects.filter(is_active=True).order_by('created_at'),
         'latest_blogs': Blog.objects.filter(is_active=True)[:3],
     })
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+# Kendi modelini import etmeyi unutma: from .models import Basvuru 
 
+def basvuru_sil(request, id):
+    if request.method == "POST":
+        # Basvuruyu veritabanından bul, yoksa 404 ver
+        basvuru = get_object_or_404(Basvuru, id=id) 
+        basvuru.delete() # Veritabanından kazı
+        messages.success(request, "Başvuru başarıyla silindi!")
+        return redirect('klinik_basvurular_sayfasi') # Kendi yönlendirme ismini yaz
+    return redirect('klinik_basvurular_sayfasi')
 def about(request): return render(request, 'about.html')
 def blog_list(request): return render(request, 'blog_list.html', {'blogs': Blog.objects.filter(is_active=True)})
 def service_detail(request, pk): return render(request, 'service_detail.html', {'service': get_object_or_404(Service, pk=pk)})

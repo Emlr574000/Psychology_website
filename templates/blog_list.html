@@ -46,7 +46,7 @@
         {% if blog.image %}
             <img src="{{ blog.image.url }}" class="blog-img">
         {% else %}
-            <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=1000" class="blog-img">
+            <img src="{% static 'images/psikolog.jpg' %}" class="blog-img">
         {% endif %}
 
         <div class="blog-content">

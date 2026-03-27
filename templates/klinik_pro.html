@@ -56,7 +56,7 @@
             <a href="{% url 'custom_dashboard_tab' 'genel' %}" class="nav-link {% if active_tab == 'genel' %}active{% endif %}"><i class="fas fa-chart-pie"></i> Genel Bakış</a>
             <a href="{% url 'custom_dashboard_tab' 'danisanlar' %}" class="nav-link {% if active_tab == 'danisanlar' %}active{% endif %}"><i class="fas fa-address-book"></i> Yeni Başvurular</a>
             <a href="{% url 'custom_dashboard_tab' 'seans_takvimi' %}" class="nav-link {% if active_tab == 'seans_takvimi' %}active{% endif %}"><i class="fas fa-calendar-alt"></i> Seans Takvimi</a>
-            <a href="{% url 'custom_dashboard_tab' 'seans_odasi' %}" class="nav-link {% if active_tab == 'seans_odasi' %}active{% endif %}"><i class="fas fa-video"></i> Canlı Seans Odası</a>
+            <a href="{% url 'custom_dashboard_tab' 'seans_odasi' %}" class="nav-link {% if active_tab == 'seans_odasi' %}active{% endif %}"><i class="fas fa-video"></i> Seans Odası</a>
             <a href="{% url 'custom_dashboard_tab' 'mesajlar' %}" class="nav-link {% if active_tab == 'mesajlar' %}active{% endif %}"><i class="fas fa-comment-dots"></i> Mesajlar</a>
             <a href="{% url 'custom_dashboard_tab' 'blog' %}" class="nav-link {% if active_tab == 'blog' %}active{% endif %}"><i class="fas fa-file-alt"></i> Blog Yönetimi</a>
         </nav>
@@ -97,7 +97,10 @@
         {% endif %}
 
         {% if active_tab == 'seans_takvimi' %}
-        <div class="header"><h1>Seans Takvimi & Planlama</h1></div>
+        <div class="header">
+            <h1>Seans Takvimi & Planlama</h1>
+            <button class="btn btn-blue" onclick="document.getElementById('yeniHastaModal').style.display='flex'"><i class="fas fa-plus"></i> Yeni Hasta Ekle (Seans Ata)</button>
+        </div>
         
         {% if tarihsiz_onaylilar %}
         <div class="widget" style="border-left: 4px solid #f59e0b;">
@@ -109,13 +112,17 @@
                     <tr>
                         <td><strong>{{ p.client_name }}</strong></td>
                         <td>{{ p.service }}</td>
-                        <td style="text-align: right;">
-                            <form method="POST" action="{% url 'tarih_ata' %}" style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <td style="text-align: right; display: flex; gap: 10px; justify-content: flex-end;">
+                            <form method="POST" action="{% url 'tarih_ata' %}" style="display: flex; gap: 10px; margin: 0;">
                                 {% csrf_token %}
                                 <input type="hidden" name="app_id" value="{{ p.id }}">
                                 <input type="date" name="date" class="form-control" style="margin:0; padding:5px; width:auto;" required>
                                 <input type="time" name="time" class="form-control" style="margin:0; padding:5px; width:auto;" required>
-                                <button type="submit" class="btn btn-warn">Tarih Ata & Mail Gönder</button>
+                                <button type="submit" class="btn btn-warn">Tarih Ata</button>
+                            </form>
+                            <form method="POST" action="{% url 'basvuru_sil' p.id %}" style="margin: 0;" onsubmit="return confirm('Bu başvuruyu silmek istediğinize emin misiniz?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-red" title="Sil"><i class="fas fa-trash"></i></button>
                             </form>
                         </td>
                     </tr>
@@ -129,16 +136,22 @@
             <div class="widget">
                 <h3>Yaklaşan Onaylı Seanslar</h3>
                 <table>
-                    <thead><tr><th>Tarih / Saat</th><th>Danışan</th><th>Durum</th></tr></thead>
+                    <thead><tr><th>Tarih / Saat</th><th>Danışan</th><th>Durum</th><th>İşlem</th></tr></thead>
                     <tbody>
                         {% for r in yaklasan_seanslar %}
                         <tr>
                             <td><strong style="color: var(--blue);">{{ r.date|date:"d M" }}</strong> | {{ r.time }}</td>
                             <td>{{ r.client_name }}</td>
-                            <td><span style="color: var(--green); font-size: 0.8rem;">Aktif (Mail Gitti)</span></td>
+                            <td><span style="color: var(--green); font-size: 0.8rem;">Aktif</span></td>
+                            <td>
+                                <form method="POST" action="{% url 'basvuru_sil' r.id %}" style="margin: 0;" onsubmit="return confirm('Bu seansı tamamen iptal edip silmek istediğinize emin misiniz?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-red" style="padding: 5px 10px; font-size: 0.8rem;"><i class="fas fa-trash"></i> Sil</button>
+                                </form>
+                            </td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="3">Yaklaşan seans bulunmuyor.</td></tr>
+                        <tr><td colspan="4">Yaklaşan seans bulunmuyor.</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -162,7 +175,7 @@
 
         {% if active_tab == 'seans_odasi' %}
         <div class="header">
-            <h1>Canlı Seans Odası</h1>
+            <h1>Seans Odası</h1>
             <div style="display: flex; gap: 15px; align-items: center;">
                 <h2 id="sessionTimer" style="margin: 0; color: var(--blue);">00:00:00</h2>
                 <button class="btn btn-blue" id="startBtn" onclick="toggleSession()"><i class="fas fa-play"></i> Başlat</button>
@@ -285,6 +298,32 @@
         </div>
     </div>
 
+    <div id="yeniHastaModal" class="modal-overlay">
+        <div class="modal-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: var(--blue);">Yeni Seans Oluştur</h2>
+                <button onclick="document.getElementById('yeniHastaModal').style.display='none'" style="background:transparent; border:none; color:white; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+            
+            <form method="POST" action="{% url 'yeni_seans_ekle' %}">
+                {% csrf_token %}
+                <label style="font-size: 0.8rem; color: var(--muted);">Hasta Adı Soyadı</label>
+                <input type="text" name="hasta_adi" class="form-control" style="margin-bottom: 15px;" required>
+                
+                <label style="font-size: 0.8rem; color: var(--muted);">Tarih</label>
+                <input type="date" name="tarih" class="form-control" style="margin-bottom: 15px;" required>
+                
+                <label style="font-size: 0.8rem; color: var(--muted);">Saat</label>
+                <input type="time" name="saat" class="form-control" style="margin-bottom: 15px;" required>
+                
+                <label style="font-size: 0.8rem; color: var(--muted);">Notlar (İsteğe Bağlı)</label>
+                <textarea name="notlar" class="form-control" style="margin-bottom: 15px; height: 80px;"></textarea>
+                
+                <button type="submit" class="btn btn-green" style="width: 100%; justify-content: center; padding: 12px;"><i class="fas fa-save"></i> Seansı Kaydet</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         // Modal İşlemleri
         function openIslemModal(id, name, date, time, msg) {
@@ -369,7 +408,8 @@
         }
         setupDynamicTimeSelect('takvimDate', 'takvimTime');
         setupDynamicTimeSelect('odaDate', 'odaTime');
-    // --- HASTA GEÇMİŞİNİ VE SEANS SAYISINI CANLI ÇEKEN SİSTEM ---
+
+        // --- HASTA GEÇMİŞİNİ VE SEANS SAYISINI CANLI ÇEKEN SİSTEM ---
         function loadPatientData(clientName) {
             // 1. Sağ taraftaki gizli inputa hasta adını yaz ki not doğru kişiye gitsin
             document.getElementById('secilenHastaInput').value = clientName;
