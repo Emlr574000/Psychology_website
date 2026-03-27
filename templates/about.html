@@ -1,12 +1,15 @@
 {% extends 'base.html' %}
-{% load static %} {% block content %}
+{% load static %} 
+
+{% block content %}
 <section class="about-section" style="padding: 120px 20px; background: #fff;">
     <div class="about-container" style="max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 60px; flex-wrap: wrap;">
         
         <div class="about-image-wrapper" style="flex: 1; min-width: 320px; position: relative;">
             <img src="{% static 'img/sibel-profil.jpg' %}" 
                  alt="Klinik Psikolog Sibel Domdomoğulları" 
-                 style="width: 100%; border-radius: 20px; box-shadow: 25px 25px 0px #8f9779; object-fit: cover; aspect-ratio: 3/4;"> <div style="position: absolute; top: -20px; left: -20px; width: 100px; height: 100px; background: repeating-linear-gradient(45deg, #f4f1ea, #f4f1ea 10px, transparent 10px, transparent 20px); z-index: -1; border-radius: 10px;"></div>
+                 style="width: 100%; border-radius: 20px; box-shadow: 25px 25px 0px #8f9779; object-fit: cover; aspect-ratio: 3/4;"> 
+            <div style="position: absolute; top: -20px; left: -20px; width: 100px; height: 100px; background: repeating-linear-gradient(45deg, #f4f1ea, #f4f1ea 10px, transparent 10px, transparent 20px); z-index: -1; border-radius: 10px;"></div>
         </div>
 
         <div class="about-text-wrapper" style="flex: 1.5; min-width: 320px;">
@@ -16,29 +19,30 @@
                 Profesyonel Yolculuğum ve Terapi Yaklaşımım
             </h2>
             
-            <p style="color: #555; line-height: 1.9; margin-bottom: 25px; font-size: 1.05rem;">
-               Sibel Domdomoğulları, 2024 yılında TOBB Ekonomi ve Teknoloji Üniversitesi Psikoloji Bölümü’nden mezun olmuştur. Öğrencilik hayatı boyunca psikolojinin farklı alanlarında kendini geliştirmeye önem vermiş, mesleki donanımını çeşitli saha deneyimleriyle güçlendirmiştir.
-
-Psikolojinin alt dallarına bütüncül bir bakış açısı kazanmak amacıyla Adalet Bakanlığı bünyesinde; mahkumlar ile kadın ve çocuk cezaevlerinde bulunan bireylerle çalışmalar yürütmüştür. Bu süreçte farklı yaşam öykülerine sahip bireylerle çalışarak güçlü bir gözlem ve değerlendirme becerisi edinmiştir.
-
-Spor psikolojisi alanında ise Karayolları Spor Kulübü kız voleybol takımında spor psikoloğu olarak görev almış; sporcuların performanslarını, motivasyonlarını ve psikolojik dayanıklılıklarını desteklemeye yönelik çalışmalar gerçekleştirmiştir.
-
-Ergen ve yetişkinlerle; Bilişsel Davranışçı Terapi, Şema Terapi, Aile ve Çift Terapisi ve Cinsel Terapi yaklaşımları doğrultusunda danışan kabul etmektedir. Çalışmalarında etik ilkelere bağlı, güvene dayalı ve bireye özgü bir terapi süreci yürütmeyi benimsemektedir.
-
-Yüz yüze ve online danışmanlık hizmeti sunmaktadır.
+            <p style="color: #555; line-height: 1.9; margin-bottom: 20px; font-size: 1.05rem;">
+                Sibel Domdomoğulları, 2024 yılında TOBB Ekonomi ve Teknoloji Üniversitesi Psikoloji Bölümü’nden mezun olmuştur. Öğrencilik hayatı boyunca psikolojinin farklı alanlarında kendini geliştirmeye önem vermiş, mesleki donanımını çeşitli saha deneyimleriyle güçlendirmiştir.
             </p>
             
-            <p style="color: #555; line-height: 1.9; margin-bottom: 25px; font-size: 1.05rem;">
+            <p style="color: #555; line-height: 1.9; margin-bottom: 20px; font-size: 1.05rem;">
+                Psikolojinin alt dallarına bütüncül bir bakış açısı kazanmak amacıyla Adalet Bakanlığı bünyesinde; mahkumlar ile kadın ve çocuk cezaevlerinde bulunan bireylerle çalışmalar yürütmüştür. Bu süreçte farklı yaşam öykülerine sahip bireylerle çalışarak güçlü bir gözlem ve değerlendirme becerisi edinmiştir.
+            </p>
+
+            <p style="color: #555; line-height: 1.9; margin-bottom: 20px; font-size: 1.05rem;">
+                Spor psikolojisi alanında ise Karayolları Spor Kulübü kız voleybol takımında spor psikoloğu olarak görev almış; sporcuların performanslarını, motivasyonlarını ve psikolojik dayanıklılıklarını desteklemeye yönelik çalışmalar gerçekleştirmiştir.
+            </p>
+
+            <p style="color: #555; line-height: 1.9; margin-bottom: 30px; font-size: 1.05rem;">
+                Ergen ve yetişkinlerle; Bilişsel Davranışçı Terapi, Şema Terapi, Aile ve Çift Terapisi ve Cinsel Terapi yaklaşımları doğrultusunda danışan kabul etmektedir. Çalışmalarında etik ilkelere bağlı, güvene dayalı ve bireye özgü bir terapi süreci yürütmeyi benimsemektedir. Yüz yüze ve online danışmanlık hizmeti sunmaktadır.
             </p>
 
             <div style="margin-top: 35px;">
                 <h5 style="font-family: 'Cormorant Garamond'; font-size: 1.4rem; color: #2c3e50; margin-bottom: 15px;">Çalışma Alanlarım:</h5>
                 <ul style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; list-style: none; padding: 0;">
                     <li style="display: flex; align-items: center; color: #666;"><i class="fas fa-check" style="color: #8f9779; margin-right: 10px;"></i> Anksiyete ve Kaygı Bozuklukları</li>
-                    <li style="display: flex; align-items: center; color: #666;"><i class="fas fa-check" style="color: #8f9779; margin-right: 10px;"></i> Depresyon ve Duygudurum Sorunları</li>
+                    <li style="display: flex; align-items: center; color: #666;"><i class="fas fa-check" style="color: #8f9779; margin-right: 10px;"></i> Depresyon ve Duygudurum</li>
                     <li style="display: flex; align-items: center; color: #666;"><i class="fas fa-check" style="color: #8f9779; margin-right: 10px;"></i> Travma ve İlişkili Bozukluklar</li>
                     <li style="display: flex; align-items: center; color: #666;"><i class="fas fa-check" style="color: #8f9779; margin-right: 10px;"></i> İlişki ve İletişim Problemleri</li>
-                    <li style="display: flex; align-items: center; color: #666;"><i class="fas fa-check" style="color: #8f9779; margin-right: 10px;"></i> Özgüven ve Öz Şefkat Eksikliği</li>
+                    <li style="display: flex; align-items: center; color: #666;"><i class="fas fa-check" style="color: #8f9779; margin-right: 10px;"></i> Özgüven ve Öz Şefkat</li>
                     <li style="display: flex; align-items: center; color: #666;"><i class="fas fa-check" style="color: #8f9779; margin-right: 10px;"></i> Stres Yönetimi</li>
                 </ul>
             </div>
